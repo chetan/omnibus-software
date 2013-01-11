@@ -16,7 +16,8 @@
 #
 
 name "ruby"
-version "1.9.3-p286"
+version "1.9.3-p362"
+md5 = "1efc2316dc50e97591792d90647fade2"
 
 deps = ["zlib", "ncurses", "libedit", "openssl", "libyaml", "libiconv"]
 deps << "gdbm" if OHAI.platform == "mac_os_x"
@@ -24,7 +25,7 @@ deps << "libgcc" if (platform == "solaris2" and Omnibus.config.solaris_compiler 
 dependencies deps
 
 source :url => "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-#{version}.tar.gz",
-       :md5 => 'e2469b55c2a3d0d643097d47fe4984bb'
+       :md5 => md5
 
 relative_path "ruby-#{version}"
 
