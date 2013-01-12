@@ -5,9 +5,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -17,13 +17,20 @@
 
 name "curl"
 version "7.23.1"
+md5 = "252ef351c0fc307b2d8ea1ee31542072"
 
 dependencies ["zlib", "openssl"]
 
-source :url => "http://curl.haxx.se/download/curl-7.23.1.tar.gz",
-       :md5 => "8e23151f569fb54afef093ac0695077d"
+source :url => "http://curl.haxx.se/download/curl-#{version}.tar.gz",
+       :md5 => md5
 
-relative_path 'curl-7.23.1'
+relative_path "#{name}-#{version}"
+
+env = {
+  "LDFLAGS"     => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+  "CFLAGS"      => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+  "LD_RUN_PATH" => "#{install_dir}/embedded/lib"
+}
 
 build do
   command ["./configure",
@@ -38,8 +45,12 @@ build do
            "--enable-ipv6",
            "--without-libidn",
            "--with-ssl=#{install_dir}/embedded",
-           "--with-zlib=#{install_dir}/embedded"].join(" ")
+           "--with-zlib=#{install_dir}/embedded",
+           "--without-gnutls",
+           "--without-polarssl",
+           "--without-cyassl",
+           "--without-librtmp"].join(" "), :env => env
 
-  command "make -j #{max_build_jobs}", :env => {"LD_RUN_PATH" => "#{install_dir}/embedded/lib"}
+  command "make -j #{max_build_jobs}", :env => env
   command "make install"
 end
