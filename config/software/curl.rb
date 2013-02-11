@@ -27,8 +27,8 @@ source :url => "http://curl.haxx.se/download/curl-#{version}.tar.gz",
 relative_path "#{name}-#{version}"
 
 env = {
-  "LDFLAGS"     => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
-  "CFLAGS"      => "-L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
+  "LDFLAGS"     => "-L#{install_dir}/embedded/lib",
+  "CFLAGS"      => "-I#{install_dir}/embedded/include",
   "LD_RUN_PATH" => "#{install_dir}/embedded/lib"
 }
 
