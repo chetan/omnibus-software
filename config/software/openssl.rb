@@ -5,9 +5,9 @@
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
-# 
+#
 #     http://www.apache.org/licenses/LICENSE-2.0
-# 
+#
 # Unless required by applicable law or agreed to in writing, software
 # distributed under the License is distributed on an "AS IS" BASIS,
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
@@ -16,14 +16,14 @@
 #
 
 name "openssl"
-version "1.0.1c"
+version "1.0.1e"
 
 dependencies ["zlib"]
 
-source :url => "http://www.openssl.org/source/openssl-1.0.1c.tar.gz",
-       :md5 => "ae412727c8c15b67880aef7bd2999b2e"
+source :url => "http://www.openssl.org/source/openssl-1.0.1e.tar.gz",
+       :md5 => "66bf6f10f060d561929de96f9dfe5b8c"
 
-relative_path "openssl-1.0.1c"
+relative_path "openssl-1.0.1e"
 
 build do
   env = case platform
@@ -64,7 +64,7 @@ build do
                         "zlib",
                         "shared"].join(" ")
                       when "solaris2"
-                        if Omnibus.config.solaris_compiler == "gcc" 
+                        if Omnibus.config.solaris_compiler == "gcc"
                           if architecture == "sparc"
                             ["/bin/sh ./Configure",
                              "solaris-sparcv9-gcc",
