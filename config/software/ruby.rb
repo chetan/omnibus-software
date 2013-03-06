@@ -16,8 +16,8 @@
 #
 
 name "ruby"
-version "1.9.3-p385"
-md5 = "3e0d7f8512400c1a6732327728a56f1d"
+version "1.9.3-p392"
+md5 = "f689a7b61379f83cbbed3c7077d83859"
 
 deps = ["zlib", "ncurses", "libedit", "openssl", "libyaml", "libiconv"]
 deps << "gdbm" if OHAI.platform == "mac_os_x"
