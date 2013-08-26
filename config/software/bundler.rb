@@ -16,7 +16,7 @@
 #
 
 name "bundler"
-version "1.2.3"
+version "1.3.5"
 
 dependency "rubygems" unless platform == 'windows'
 
