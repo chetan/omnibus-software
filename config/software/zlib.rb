@@ -18,7 +18,7 @@
 name "zlib"
 version "1.2.7"
 
-dependencies []
+dependency "libgcc"
 
 # TODO: this link is subject to change with each new release of zlib.
 #       we'll need to use a more robust link (sourceforge) that will
@@ -30,6 +30,11 @@ relative_path "zlib-1.2.7"
 
 configure_env =
   case platform
+  when "aix"
+    {
+      "LDFLAGS" => "-Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib -L#{install_dir}/embedded/lib",
+      "CFLAGS" => "-I#{install_dir}/embedded/include"
+    }
   when "mac_os_x"
     {
       "LDFLAGS" => "-R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include",
