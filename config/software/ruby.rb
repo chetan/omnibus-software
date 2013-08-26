@@ -1,3 +1,7 @@
+
+# source:
+# https://github.com/hayesmp/omnibus-rumm/blob/master/config/software/ruby-2.0.0-p247.rb
+
 #
 # Copyright:: Copyright (c) 2012 Opscode, Inc.
 # License:: Apache License, Version 2.0
@@ -16,7 +20,7 @@
 #
 
 name "ruby"
-version "1.9.3-p448"
+version "2.0.0-p247"
 
 dependency "zlib"
 dependency "ncurses"
@@ -27,18 +31,18 @@ dependency "libiconv"
 dependency "gdbm" if (platform == "mac_os_x" or platform == "freebsd" or platform == "aix")
 dependency "libgcc" if (platform == "solaris2" and Omnibus.config.solaris_compiler == "gcc")
 
-source :url => "http://ftp.ruby-lang.org/pub/ruby/1.9/ruby-#{version}.tar.gz",
-       :md5 => 'a893cff26bcf351b8975ebf2a63b1023'
+source :url => "http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-#{version}.tar.gz",
+       :md5 => 'c351450a0bed670e0f5ca07da3458a5b'
 
 relative_path "ruby-#{version}"
 
 env =
   case platform
-  when "mac_os_x"
-    {
-      "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses -O3 -g -pipe",
-      "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses"
-    }
+  #when "mac_os_x"
+  #  {
+  #    "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses -O3 -g -pipe",
+  #    "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses"
+  #  }
   when "solaris2"
     if Omnibus.config.solaris_compiler == "studio"
     {
@@ -121,6 +125,19 @@ build do
   else
     configure_command << "--with-opt-dir=#{install_dir}/embedded"
   end
+
+  # this works around a problem that appears to be identical to the ruby bug:
+  #   https://bugs.ruby-lang.org/issues/7217
+  # however as the patch was merged into 1.9.3-p429 it appears that there was a regression or
+  # it was not fixed for very old make's or something...
+  build_jobs = if ( (OHAI['platform_family'] == "rhel" && OHAI['platform_version'].to_f < 6) ||
+                   OHAI['platform'] == "mac_os_x" ||
+                   OHAI['platform'] == "solaris2"
+                  )
+                 1
+               else
+                 max_build_jobs
+               end
 
   # @todo expose bundle_bust() in the DSL
   env.merge!({
