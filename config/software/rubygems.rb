@@ -16,12 +16,12 @@
 #
 
 name "rubygems"
-version "1.8.25"
+version "2.0.7"
 
 dependency "ruby"
 
 source :url => "http://production.cf.rubygems.org/rubygems/rubygems-#{version}.tgz",
-       :md5 => "1376a258d43c53750a8df30e67853e10"
+       :md5 => "9046700f1222712fedfb836fafa08c50"
 
 relative_path "rubygems-#{version}"
 
