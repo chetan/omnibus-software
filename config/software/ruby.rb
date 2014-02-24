@@ -20,7 +20,7 @@
 #
 
 name "ruby"
-version "2.0.0-p247"
+version "2.1.1"
 
 dependency "zlib"
 dependency "ncurses"
@@ -31,8 +31,8 @@ dependency "libiconv"
 dependency "gdbm" if (platform == "mac_os_x" or platform == "freebsd" or platform == "aix")
 dependency "libgcc" if (platform == "solaris2" and Omnibus.config.solaris_compiler == "gcc")
 
-source :url => "http://ftp.ruby-lang.org/pub/ruby/2.0/ruby-#{version}.tar.gz",
-       :md5 => 'c351450a0bed670e0f5ca07da3458a5b'
+source :url => "http://cache.ruby-lang.org/pub/ruby/2.1/ruby-#{version}.tar.gz",
+       :md5 => 'e57fdbb8ed56e70c43f39c79da1654b2'
 
 relative_path "ruby-#{version}"
 
