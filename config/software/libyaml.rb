@@ -16,19 +16,27 @@
 #
 
 name "libyaml"
-version "0.1.4"
+version "0.1.5"
 
-source :url => "http://pyyaml.org/download/libyaml/yaml-0.1.4.tar.gz",
-       :md5 => "36c852831d02cf90508c29852361d01b"
+source :url => "http://pyyaml.org/download/libyaml/yaml-#{version}.tar.gz",
+       :md5 => "24f6093c1e840ca5df2eb09291a1dbf1"
 
-relative_path "yaml-0.1.4"
+relative_path "yaml-#{version}"
 
 configure_env =
   case platform
   when "aix"
     {
-      "LDFLAGS" => "-Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib -L#{install_dir}/embedded/lib",
-      "CFLAGS" => "-I#{install_dir}/embedded/include"
+      "CC" => "xlc -q64",
+      "CXX" => "xlC -q64",
+      "LD" => "ld -b64",
+      "CFLAGS" => "-q64 -I#{install_dir}/embedded/include -O",
+      "LDFLAGS" => "-q64 -Wl,-blibpath:/usr/lib:/lib",
+      "OBJECT_MODE" => "64",
+      "ARFLAGS" => "-X64 cru",
+      "LD" => "ld -b64",
+      "OBJECT_MODE" => "64",
+      "ARFLAGS" => "-X64 cru "
     }
   when "mac_os_x"
     {
@@ -58,6 +66,6 @@ configure_env =
 
 build do
   command "./configure --prefix=#{install_dir}/embedded", :env => configure_env
-  command "make -j #{max_build_jobs}"
-  command "make install"
+  command "make -j #{max_build_jobs}", :env => configure_env
+  command "make -j #{max_build_jobs} install", :env => configure_env
 end

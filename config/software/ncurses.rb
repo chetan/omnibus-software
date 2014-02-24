@@ -19,6 +19,7 @@ name "ncurses"
 version "5.9"
 
 dependency "libgcc"
+dependency "libtool" if platform == "aix"
 
 source :url => "http://ftp.gnu.org/gnu/ncurses/ncurses-5.9.tar.gz",
        :md5 => "8cb9c412e5f2d96bc6f459aa8c6282a1"
@@ -28,10 +29,15 @@ relative_path "ncurses-5.9"
 env = case platform
       when "aix"
         {
-          "LDFLAGS" => "-Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib -L#{install_dir}/embedded/lib",
-          "CFLAGS" => "-I#{install_dir}/embedded/include",
-          "CC" => "xlc",
-          "CXX" => "xlC"
+          "PATH" => "#{install_dir}/embedded/bin:" + ENV['PATH'],
+          "LDFLAGS" => "-Wl,-brtl -Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib -L#{install_dir}/embedded/lib",
+          "CXXFLAGS" => "-O -I#{install_dir}/embedded/include",
+          "CFLAGS" => "-O -I#{install_dir}/embedded/include",
+          "OBJECT_MODE" => "64",
+          "CC" => "gcc -maix64",
+          "CXX" => "g++ -maix64",
+          "CFLAGS" => "-maix64 -I#{install_dir}/embedded/include",
+          "ARFLAGS" => "-X64 cru"
         }
       else
         {
@@ -90,34 +96,51 @@ build do
     patch :source => 'patch-aix-configure', :plevel => 0
   end
 
+  if platform == "mac_os_x"
+    # References:
+    # https://github.com/Homebrew/homebrew-dupes/issues/43
+    # http://invisible-island.net/ncurses/NEWS.html#t20110409
+    #
+    # Patches ncurses for clang compiler. Changes have been accepted into
+    # upstream, but occurred shortly after the 5.9 release. We should be able
+    # to remove this after upgrading to any release created after June 2012
+    patch :source => 'ncurses-clang.patch'
+  end
+
   # build wide-character libraries
-  command(["./configure",
+  cmd_array = ["./configure",
            "--prefix=#{install_dir}/embedded",
            "--with-shared",
            "--with-termlib",
            "--without-debug",
            "--without-normal", # AIX doesn't like building static libs
            "--enable-overwrite",
-           "--enable-widec"].join(" "),
+           "--enable-widec"]
+
+  cmd_array << "--with-libtool" if platform == 'aix'
+  command(cmd_array.join(" "),
           :env => env)
   command "make -j #{max_build_jobs}", :env => env
-  command "make install", :env => env
+  command "make -j #{max_build_jobs} install", :env => env
 
   # build non-wide-character libraries
   command "make distclean"
-  command(["./configure",
+  cmd_array = ["./configure",
            "--prefix=#{install_dir}/embedded",
            "--with-shared",
            "--with-termlib",
            "--without-debug",
-           "--enable-overwrite"].join(" "),
+           "--without-normal",
+           "--enable-overwrite"]
+  cmd_array << "--with-libtool" if platform == 'aix'
+  command(cmd_array.join(" "),
           :env => env)
   command "make -j #{max_build_jobs}", :env => env
 
   # installing the non-wide libraries will also install the non-wide
   # binaries, which doesn't happen to be a problem since we don't
   # utilize the ncurses binaries in private-chef (or oss chef)
-  command "make install", :env => env
+  command "make -j #{max_build_jobs} install", :env => env
 
   # Ensure embedded ncurses wins in the LD search path
   if platform == "smartos"

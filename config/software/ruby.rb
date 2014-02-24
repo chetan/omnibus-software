@@ -38,11 +38,11 @@ relative_path "ruby-#{version}"
 
 env =
   case platform
-  #when "mac_os_x"
-  #  {
-  #    "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses -O3 -g -pipe",
-  #    "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses"
-  #  }
+  when "mac_os_x"
+   {
+     "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses -O3 -g -pipe",
+     "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses"
+   }
   when "solaris2"
     if Omnibus.config.solaris_compiler == "studio"
     {
@@ -72,17 +72,27 @@ env =
       #
       # AIX also uses -Wl,-blibpath instead of -R or LD_RUN_PATH, but the
       # option is not additive, so requires /usr/lib and /lib as well (there
-      # is another compiler option to allow ld to take an -R flag in addition
+      # is a -bsvr4 option to allow ld to take an -R flag in addition
       # to turning on -brtl, but it had other side effects I couldn't fix).
+      #
+      # If libraries linked with gcc -shared have symbol resolution failures
+      # then it may be useful to add -bexpfull to export all symbols.
       #
       # -O2 optimized away some configure test which caused ext libs to fail
       #
       # We also need prezl's M4 instead of picking up /usr/bin/m4 which
       # barfs on ruby.
       #
-      "CFLAGS" => "-I#{install_dir}/embedded/include -O",
-      "LDFLAGS" => "-L#{install_dir}/embedded/lib -Wl,-brtl -Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib",
-      "M4" => "/opt/freeware/bin/m4"
+      "CC" => "xlc -q64",
+      "CXX" => "xlC -q64",
+      "LD" => "ld -b64",
+      "CFLAGS" => "-q64 -O -qhot -I#{install_dir}/embedded/include",
+      "CXXFLAGS" => "-q64 -O -qhot -I#{install_dir}/embedded/include",
+      "LDFLAGS" => "-q64  -L#{install_dir}/embedded/lib -Wl,-brtl -Wl,-blibpath:#{install_dir}/embedded/lib:/usr/lib:/lib",
+      "OBJECT_MODE" => "64",
+      "ARFLAGS" => "-X64 cru",
+      "M4" => "/opt/freeware/bin/m4",
+      "warnflags" => "-qinfo=por"
     }
   else
     {
@@ -103,6 +113,7 @@ build do
   case platform
   when "aix"
     patch :source => "ruby-aix-configure.patch", :plevel => 1
+    patch :source => "ruby_aix_1_9_3_448_ssl_EAGAIN.patch", :plevel => 1
     # --with-opt-dir causes ruby to send bogus commands to the AIX linker
   when "freebsd"
     configure_command << "--without-execinfo"
@@ -160,5 +171,5 @@ build do
 
   command configure_command.join(" "), :env => env
   command "#{make_binary} -j #{max_build_jobs}", :env => env
-  command "#{make_binary} install", :env => env
+  command "#{make_binary} -j #{max_build_jobs} install", :env => env
 end
