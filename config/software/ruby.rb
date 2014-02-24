@@ -39,10 +39,10 @@ relative_path "ruby-#{version}"
 env =
   case platform
   when "mac_os_x"
-   {
-     "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses -O3 -g -pipe",
-     "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses"
-   }
+    {
+      "CFLAGS" => "-arch x86_64 -m64 -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses -O3 -g -pipe",
+      "LDFLAGS" => "-arch x86_64 -R#{install_dir}/embedded/lib -L#{install_dir}/embedded/lib -I#{install_dir}/embedded/include -I#{install_dir}/embedded/include/ncurses"
+    }
   when "solaris2"
     if Omnibus.config.solaris_compiler == "studio"
     {
@@ -136,19 +136,6 @@ build do
   else
     configure_command << "--with-opt-dir=#{install_dir}/embedded"
   end
-
-  # this works around a problem that appears to be identical to the ruby bug:
-  #   https://bugs.ruby-lang.org/issues/7217
-  # however as the patch was merged into 1.9.3-p429 it appears that there was a regression or
-  # it was not fixed for very old make's or something...
-  build_jobs = if ( (OHAI['platform_family'] == "rhel" && OHAI['platform_version'].to_f < 6) ||
-                   OHAI['platform'] == "mac_os_x" ||
-                   OHAI['platform'] == "solaris2"
-                  )
-                 1
-               else
-                 max_build_jobs
-               end
 
   # @todo expose bundle_bust() in the DSL
   env.merge!({
