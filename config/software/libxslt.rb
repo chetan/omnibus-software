@@ -16,7 +16,7 @@
 #
 
 name "libxslt"
-version "1.1.26"
+default_version "1.1.26"
 
 dependency "libxml2"
 

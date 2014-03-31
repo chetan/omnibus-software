@@ -16,7 +16,7 @@
 #
 
 name "curl"
-version "7.35.0"
+default_version "7.35.0"
 md5 = "f5ae45ed6e86debb721b68392b5ce13c"
 
 dependency "zlib"

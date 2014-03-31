@@ -16,7 +16,7 @@
 #
 
 name "rubygems"
-version "2.2.2"
+default_version "2.2.2"
 
 dependency "ruby"
 

@@ -16,7 +16,7 @@
 #
 
 name "zlib"
-version "1.2.8"
+default_version "1.2.8"
 
 dependency "libgcc"
 
