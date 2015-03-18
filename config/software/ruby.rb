@@ -36,7 +36,7 @@ version "2.1.1" do
 end
 
 version "2.2.1" do
-  source md5: '06973777736d8e6bdad8dcaa469a9da3'
+  source md5: 'b49fc67a834e4f77249eb73eecffb1c9'
 end
 
 source url: "http://cache.ruby-lang.org/pub/ruby/#{version.match(/^(\d+\.\d+)/)[0]}/ruby-#{version}.tar.gz"
