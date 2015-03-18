@@ -16,8 +16,8 @@
 #
 
 name "curl"
-default_version "7.35.0"
-md5 = "f5ae45ed6e86debb721b68392b5ce13c"
+default_version "7.41.0"
+md5 = "7321a0a3012f8eede729b5a44ebef5bd"
 
 dependency "zlib"
 dependency "openssl"
