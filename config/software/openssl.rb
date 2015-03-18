@@ -29,9 +29,9 @@ if platform == "aix"
   source :url => "http://www.openssl.org/source/openssl-1.0.1c.tar.gz",
          :md5 => "ae412727c8c15b67880aef7bd2999b2e"
 else
-  version "1.0.1g"
-  source :url => "https://www.openssl.org/source/openssl-1.0.1g.tar.gz",
-         :md5 => "de62b43dfcd858e66a74bee1c834e959"
+  version "1.0.2"
+  source :url => "https://www.openssl.org/source/openssl-1.0.2.tar.gz",
+         :md5 => "38373013fc85c790aabf8837969c5eba"
 end
 
 relative_path "openssl-#{version}"
