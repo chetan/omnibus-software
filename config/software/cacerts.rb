@@ -16,10 +16,10 @@
 #
 
 name "cacerts"
-default_version "2014.01.28"  # date of the file is in a comment at the start, or in the changelog
+default_version "2015.02.25"  # date of the file is in a comment at the start, or in the changelog
 
-source :url => "http://curl.haxx.se/ca/cacert.pem",
-       :md5 => '5d108f8ab86afacc6663aafca8604dd3'
+source :url => "https://s3.bixby.io/build/cacert.pem", # https://curl.haxx.se/ca/cacert.pem
+       :md5 => '19e7f27540ee694308729fd677163649'
 
 relative_path "cacerts-#{version}"
 
